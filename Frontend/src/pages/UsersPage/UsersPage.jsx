@@ -32,6 +32,17 @@ const UsersPage = () => {
   if (loading) return <Preloader />;
   if (error) return <p className={s.error}>{'Some error occurred'}</p>;
 
+  // Фильтруем пользователей, чтобы не показывать пользователей с одинаковыми номерами телефонов
+  const uniqueUsers = users
+    .filter((user) => user.username !== 'admin')  // Исключаем админа
+    .reduce((acc, user) => {
+      // Добавляем пользователя в массив, если его номер телефона еще не был добавлен
+      if (!acc.some((existingUser) => existingUser.phone === user.phone)) {
+        acc.push(user);
+      }
+      return acc;
+    }, []);
+
   return (
     <div className={s.container}>
       {!isAuthenticated ? (
@@ -49,7 +60,7 @@ const UsersPage = () => {
             />
           </div>
           <div className={s.label}>
-           <AiOutlineLock className={s.icon} />
+            <AiOutlineLock className={s.icon} />
             <input
               type="password"
               className={s.input}
@@ -71,20 +82,18 @@ const UsersPage = () => {
         </form>
       ) : (
         <div className={s.userGrid}>
-          {users.length ? (
-            users
-              .filter((user) => user.username !== 'admin')
-              .map((user) => (
-                <div key={user._id} className={s.userCard}>
-                  <div className={s.avatar}>
-                    <AiOutlineUser className={s.userIcon} />
-                  </div>
-                  <div className={s.userInfo}>
-                    <div className={s.username}>{user.username || 'Unknown User'}</div>
-                    <div className={s.phone}>{user.phone || 'Unknown User'}</div>
-                  </div>
+          {uniqueUsers.length ? (
+            uniqueUsers.map((user) => (
+              <div key={user._id} className={s.userCard}>
+                <div className={s.avatar}>
+                  <AiOutlineUser className={s.userIcon} />
                 </div>
-              ))
+                <div className={s.userInfo}>
+                  <div className={s.username}>{user.username || 'Unknown User'}</div>
+                  <div className={s.phone}>{user.phone || 'Unknown User'}</div>
+                </div>
+              </div>
+            ))
           ) : (
             <p>{'Users not found'}</p>
           )}

@@ -23,26 +23,27 @@ export default function ContactsPage() {
     e.preventDefault();
 
     if (!form.name || !form.email || !form.phone) {
-      toast.success('Please fill out all fields');
-      return;
+        toast.success('Please fill out all fields');
+        return;
     }
 
     try {
-      setLoading(true);
+        setLoading(true);
+        console.log('Sending user data:', form); // Логирование данных перед отправкой
 
-      await axios.post('/users', {
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        password: 'defaultPassword123', 
-      });
+        await axios.post('/users', {
+            name: form.name,
+            email: form.email,
+            phone: form.phone,
+            password: 'defaultPassword123',
+        });
 
-      navigate('/thanku');
+        navigate('/thanku');
     } catch (error) {
-      toast.success('Error when sent! Try again.');
-      console.error('Error sending user data:', error);
+        toast.success('Error when sent! Try again.');
+        console.error('Error sending user data:', error);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
 };
 
